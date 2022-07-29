@@ -1,11 +1,16 @@
 package main
 
 import (
+	"os"
 	"wakago/api"
-	"wakago/cmd"
+	//	"wakago/cmd"
 )
 
 func main() {
-	cmd.Execute()
+	//	cmd.Execute()
+	wt := api.GetInstance()
+
+	wt.Init(os.Getenv("CLIENT_ID"), os.Getenv("CLIENT_SECRET"))
+	wt.Login()
 	api.InitServer()
 }

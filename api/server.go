@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"text/template"
@@ -11,18 +10,14 @@ import (
 
 func Callback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "text/html; charset=utf8")
-	log.Println(r.URL.Query().Get("code"))
 	t, err := template.ParseFiles("static/callback.html")
-
 	if err != nil {
 		log.Println(err)
 	}
-
-	fmt.Println(t)
-	fmt.Println("Callback called!")
-	//fmt.Fprint(w, t)
-
-	err = t.Execute(w, nil)
+	code := r.URL.Query().Get("code")
+	wt := GetInstance()
+	wt.SetAuthCode(code)
+	t.Execute(w, nil)
 	if err != nil {
 		log.Println("e", err)
 	}
