@@ -17,6 +17,16 @@ func Callback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	code := r.URL.Query().Get("code")
 	wt := GetInstance()
 	wt.SetAuthCode(code)
+
+	log.Println(wt)
+	goals, err := wt.GetGoals()
+
+	log.Println("Goals: ", goals)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	t.Execute(w, nil)
 	if err != nil {
 		log.Println("e", err)

@@ -46,7 +46,7 @@ var wakatimeOauthConfig = &oauth2.Config{
 	RedirectURL:  redirectUrl,
 	ClientID:     os.Getenv("CLIENT_ID"),
 	ClientSecret: os.Getenv("CLIENT_SECRET"),
-	Scopes:       []string{"email,", "read_logged_time,", "read_stats"},
+	Scopes:       []string{"email,", "read_logged_time,", "read_stats,", "read_orgs"},
 	Endpoint: oauth2.Endpoint{
 		AuthURL:   "https://wakatime.com/oauth/authorize",
 		TokenURL:  "https://wakatime.com/oauth/token",
@@ -108,17 +108,24 @@ func (wt *Wakatime) getToken(code string) (*oauth2.Token, error) {
 }
 
 func (wt *Wakatime) GetGoals() (string, error) {
-  req, err := http.NewRequest("GET", )
-	response, err := http.Get(fmt.Sprintf("%s/users/current/goals", wakatimeApiUrl))
+	url := fmt.Sprintf("%s/users/current/goals", wakatimeApiUrl)
+	req, err := http.NewRequest("GET", url, nil)
+
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", (*wt).oauthCode))
+
+	log.Println(req.Header)
+	resp, err := (*wt).client.Do(req)
+
+	log.Println(req.Header.Get("Authorization"))
 
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
 
-	defer response.Body.Close()
+	defer resp.Body.Close()
 
-	contents, err := ioutil.ReadAll(response.Body)
+	contents, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
 		log.Println("Error reading response")
@@ -129,5 +136,7 @@ func (wt *Wakatime) GetGoals() (string, error) {
 }
 
 func (wt *Wakatime) SetAuthCode(code string) {
+	log.Println("SetAuthCode: ", code)
 	(*wt).oauthCode = code
+	log.Println("Code Set: ", *wt)
 }
