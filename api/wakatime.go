@@ -1,5 +1,12 @@
 package api
 
+// TODOS:
+// [] Store access token (prevent from getting token everytime)
+// [] Access Token refresh mechanism
+// [] Terminal output format mechanism
+// [] Better structure
+// [] Unit Tests
+
 import (
 	"context"
 	"crypto/rand"
@@ -113,10 +120,7 @@ func (wt *Wakatime) GetGoals() (Goals, error) {
 
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", (*wt).oauthToken))
 
-	log.Println(req.Header)
 	resp, err := (*wt).client.Do(req)
-
-	log.Println(req.Header.Get("Authorization"))
 
 	if err != nil {
 		log.Println(err)
@@ -136,11 +140,19 @@ func (wt *Wakatime) GetGoals() (Goals, error) {
 }
 
 func (wt *Wakatime) Exchange(code string) error {
-	log.Println("Exchange code:", code)
 	accessToken, err := (*wt).oauth2.Exchange(context.Background(), code)
 	if err != nil {
 		log.Println("Exchange:", err)
 	}
 	(*wt).oauthToken = accessToken.AccessToken
 	return err
+}
+
+func (wt *Wakatime) Status() string {
+	var status string
+	if (*wt).oauthToken != "" {
+		status = fmt.Sprintf("✓ Access Token Set: %s", (*wt).oauthToken)
+	}
+
+	return status
 }

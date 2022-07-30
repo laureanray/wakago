@@ -42,3 +42,7 @@ func InitServer() {
 
 	log.Fatal(http.ListenAndServe(":8090", router))
 }
+
+func Kill() {
+
+}
