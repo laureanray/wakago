@@ -16,9 +16,9 @@ import (
 )
 
 type Wakatime struct {
-	oauth2    *oauth2.Config
-	oauthCode string
-	client    *http.Client
+	oauth2     *oauth2.Config
+	oauthToken string
+	client     *http.Client
 }
 
 var wtInstance *Wakatime
@@ -64,7 +64,7 @@ func (wt *Wakatime) Init(clientId, clientSecret string) {
 		Endpoint: oauth2.Endpoint{
 			AuthURL:   "https://wakatime.com/oauth/authorize",
 			TokenURL:  "https://wakatime.com/oauth/token",
-			AuthStyle: 0,
+			AuthStyle: 1,
 		},
 	}
 
@@ -111,7 +111,7 @@ func (wt *Wakatime) GetGoals() (string, error) {
 	url := fmt.Sprintf("%s/users/current/goals", wakatimeApiUrl)
 	req, err := http.NewRequest("GET", url, nil)
 
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", (*wt).oauthCode))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", (*wt).oauthToken))
 
 	log.Println(req.Header)
 	resp, err := (*wt).client.Do(req)
@@ -135,8 +135,12 @@ func (wt *Wakatime) GetGoals() (string, error) {
 	return string(contents), nil
 }
 
-func (wt *Wakatime) SetAuthCode(code string) {
-	log.Println("SetAuthCode: ", code)
-	(*wt).oauthCode = code
-	log.Println("Code Set: ", *wt)
+func (wt *Wakatime) Exchange(code string) error {
+	log.Println("Exchange code:", code)
+	accessToken, err := (*wt).oauth2.Exchange(context.Background(), code)
+	if err != nil {
+		log.Println("Exchange:", err)
+	}
+	(*wt).oauthToken = accessToken.AccessToken
+	return err
 }

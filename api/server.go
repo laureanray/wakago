@@ -16,9 +16,9 @@ func Callback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 	code := r.URL.Query().Get("code")
 	wt := GetInstance()
-	wt.SetAuthCode(code)
+	log.Println(wt.oauthToken, code)
 
-	log.Println(wt)
+	wt.Exchange(code)
 	goals, err := wt.GetGoals()
 
 	log.Println("Goals: ", goals)
