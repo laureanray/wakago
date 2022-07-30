@@ -4,8 +4,8 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -107,7 +107,7 @@ func (wt *Wakatime) getToken(code string) (*oauth2.Token, error) {
 	return token, err
 }
 
-func (wt *Wakatime) GetGoals() (string, error) {
+func (wt *Wakatime) GetGoals() (Goals, error) {
 	url := fmt.Sprintf("%s/users/current/goals", wakatimeApiUrl)
 	req, err := http.NewRequest("GET", url, nil)
 
@@ -120,19 +120,19 @@ func (wt *Wakatime) GetGoals() (string, error) {
 
 	if err != nil {
 		log.Println(err)
-		return "", err
 	}
 
 	defer resp.Body.Close()
 
-	contents, err := ioutil.ReadAll(resp.Body)
+	var goals Goals
+
+	err = json.NewDecoder(resp.Body).Decode(&goals)
 
 	if err != nil {
 		log.Println("Error reading response")
-		return "", err
 	}
 
-	return string(contents), nil
+	return goals, err
 }
 
 func (wt *Wakatime) Exchange(code string) error {

@@ -28,11 +28,11 @@ type Subscriber struct {
 
 type GoalData struct {
 	ID               string       `json:"id"`
-	AverageStatus    float64      `json:"average_status"`
+	AverageStatus    string       `json:"average_status"`
 	ChartData        []ChartEntry `json:"chart_data"`
 	CumulativeStatus string       `json:"cumulative_status"`
 	Delta            string       `json:"delta"`
-	IgnoreDays       string       `json:"ignore_days"`
+	IgnoreDays       []string     `json:"ignore_days"`
 	ImproveByPercent string       `json:"improve_by_percent"`
 	IsEnabled        bool         `json:"is_enabled"`
 	Languages        []string     `json:"languages"`
@@ -46,4 +46,10 @@ type GoalData struct {
 type Goal struct {
 	CachedAt string   `json:"cached_at"`
 	Data     GoalData `json:"data"`
+}
+
+type Goals struct {
+	Data       []GoalData `json:"data"`
+	Total      int64      `json:"total"`
+	TotalPages int64      `json:"total_pages"`
 }
