@@ -12,7 +12,9 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -62,7 +64,7 @@ var wakatimeOauthConfig = &oauth2.Config{
 }
 
 func (wt *Wakatime) Init(clientId, clientSecret string) {
-	fmt.Println("init")
+	log.Println("Init")
 	(*wt).oauth2 = &oauth2.Config{
 		RedirectURL:  redirectUrl,
 		ClientID:     clientId,
@@ -76,6 +78,43 @@ func (wt *Wakatime) Init(clientId, clientSecret string) {
 	}
 
 	(*wt).client = &http.Client{}
+	(*wt).initAppData()
+}
+
+// TODO: Improve this to use key value store or something more robust
+func (wt *Wakatime) initAppData() {
+	_, err := os.Stat("wakatime.data")
+
+	if errors.Is(err, os.ErrNotExist) {
+		log.Println("File doesnt exist")
+	} else {
+		fileData, err := ioutil.ReadFile("wakatime.data")
+		if err != nil {
+			log.Fatal(err)
+		}
+		if len(fileData) != 0 {
+			// Read the data and use it
+
+			(*wt).oauthToken = string(fileData)
+		}
+	}
+}
+
+func (wt *Wakatime) saveAppData() {
+	f, err := os.OpenFile("wakatime.data", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer func() {
+		if err = f.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	bytesWritten, err := f.WriteString((*wt).oauthToken)
+
+	log.Printf("%d bytes written", bytesWritten)
 }
 
 // TODO: Add expiration?
@@ -106,12 +145,6 @@ func (wt *Wakatime) Login() (err error) {
 		log.Fatal(err)
 	}
 	return nil
-}
-
-func (wt *Wakatime) getToken(code string) (*oauth2.Token, error) {
-	token, err := (*wt).oauth2.Exchange(context.Background(), code)
-
-	return token, err
 }
 
 func (wt *Wakatime) GetGoals() (Goals, error) {
@@ -145,6 +178,7 @@ func (wt *Wakatime) Exchange(code string) error {
 		log.Println("Exchange:", err)
 	}
 	(*wt).oauthToken = accessToken.AccessToken
+	(*wt).saveAppData()
 	return err
 }
 

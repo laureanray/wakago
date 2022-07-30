@@ -1,11 +1,6 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
-	"os"
 	"wakago/api"
 
 	"github.com/spf13/cobra"
@@ -23,7 +18,6 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		wt := api.GetInstance()
-		wt.Init(os.Getenv("CLIENT_ID"), os.Getenv("CLIENT_SECRET"))
 		wt.Login()
 		api.InitServer()
 	},
