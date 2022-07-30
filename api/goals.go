@@ -1,5 +1,7 @@
 package api
 
+import "fmt"
+
 type Range struct {
 	Date     string `json:"date"`
 	End      string `json:"end"`
@@ -33,7 +35,7 @@ type GoalData struct {
 	CumulativeStatus string       `json:"cumulative_status"`
 	Delta            string       `json:"delta"`
 	IgnoreDays       []string     `json:"ignore_days"`
-	ImproveByPercent string       `json:"improve_by_percent"`
+	ImproveByPercent float64      `json:"improve_by_percent"` // for some reason always null
 	IsEnabled        bool         `json:"is_enabled"`
 	Languages        []string     `json:"languages"`
 	Projects         []string     `json:"projects"`
@@ -41,6 +43,8 @@ type GoalData struct {
 	Seconds          int64        `json:"seconds"`
 	Status           string       `json:"status"`
 	Subscribers      []Subscriber `json:"subscribers"`
+	Title            string       `json:"title"`
+	Type             string       `json:"type"`
 }
 
 type Goal struct {
@@ -52,4 +56,15 @@ type Goals struct {
 	Data       []GoalData `json:"data"`
 	Total      int64      `json:"total"`
 	TotalPages int64      `json:"total_pages"`
+}
+
+func FormatGoal(goalData GoalData) string {
+	oneliner := fmt.Sprintf("[%s - %s] [%f] %s",
+		goalData.Title,
+		goalData.Type,
+		goalData.ImproveByPercent,
+		goalData.AverageStatus,
+	)
+
+	return oneliner
 }
