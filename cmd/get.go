@@ -34,7 +34,6 @@ var getGoalsCmd = &cobra.Command{
 	Long:  `Print to the terminal your current goals and choose the look and feel of the output`,
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println("Get goals")
 		wt := api.GetInstance()
 		goals, err := wt.GetGoals()
 

@@ -1,7 +1,7 @@
 package api
 
 // TODOS:
-// [] Store access token (prevent from getting token everytime)
+// [X] Store access token (prevent from getting token everytime)
 // [] Access Token refresh mechanism
 // [] Terminal output format mechanism
 // [] Better structure
