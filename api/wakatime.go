@@ -154,7 +154,15 @@ func (wt *Wakatime) sendAuthenticatedRequest(requestUrl string) (*http.Response,
 
 	resp, err := (*wt).client.Do(req)
 
-	defer resp.Body.Close()
+	log.Println(resp.Body)
+
+	if err != nil {
+		log.Println("erro", err)
+	} else {
+		log.Println("walang error")
+	}
+
+	//defer resp.Body.Close()
 	return resp, err
 }
 
@@ -171,8 +179,10 @@ func (wt *Wakatime) GetGoals() (Goals, error) {
 	err = json.NewDecoder(resp.Body).Decode(&goals)
 
 	if err != nil {
-		log.Println("Error reading response")
+		log.Println("Error reading response", err)
 	}
+
+	defer resp.Body.Close()
 
 	return goals, err
 }

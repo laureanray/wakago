@@ -36,14 +36,15 @@ var getGoalsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		wt := api.GetInstance()
 		goals, err := wt.GetGoals()
-
+		log.Println(goals.Data)
 		if err != nil {
 			log.Println(err)
 		}
 
-		formatted := api.FormatGoal(goals.Data[0])
-
-		fmt.Print(formatted)
+		if len(goals.Data) > 0 {
+			formatted := api.FormatGoal(goals.Data[0])
+			fmt.Print(formatted)
+		}
 	},
 }
 
