@@ -5,7 +5,6 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"wakago/api"
 
@@ -36,15 +35,16 @@ var getGoalsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		wt := api.GetInstance()
 		goals, err := wt.GetGoals()
-		log.Println(goals.Data)
 		if err != nil {
 			log.Println(err)
 		}
 
-		if len(goals.Data) > 0 {
-			formatted := api.FormatGoal(goals.Data[0])
-			fmt.Print(formatted)
-		}
+		api.FormatGoals(goals)
+
+		//if len(goals.Data) > 0 {
+		//	formatted := api.FormatGoal(goals.Data[0])
+		//	fmt.Print(formatted)
+		//}
 	},
 }
 

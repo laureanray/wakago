@@ -154,15 +154,10 @@ func (wt *Wakatime) sendAuthenticatedRequest(requestUrl string) (*http.Response,
 
 	resp, err := (*wt).client.Do(req)
 
-	log.Println(resp.Body)
-
 	if err != nil {
 		log.Println("erro", err)
-	} else {
-		log.Println("walang error")
 	}
 
-	//defer resp.Body.Close()
 	return resp, err
 }
 
