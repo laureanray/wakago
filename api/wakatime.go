@@ -147,19 +147,24 @@ func (wt *Wakatime) Login() (err error) {
 	return nil
 }
 
-func (wt *Wakatime) GetGoals() (Goals, error) {
-	url := fmt.Sprintf("%s/users/current/goals", wakatimeApiUrl)
-	req, err := http.NewRequest("GET", url, nil)
+func (wt *Wakatime) sendAuthenticatedRequest(requestUrl string) (*http.Response, error) {
+	req, err := http.NewRequest("GET", requestUrl, nil)
 
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", (*wt).oauthToken))
 
 	resp, err := (*wt).client.Do(req)
 
+	defer resp.Body.Close()
+	return resp, err
+}
+
+func (wt *Wakatime) GetGoals() (Goals, error) {
+	url := fmt.Sprintf("%s/users/current/goals", wakatimeApiUrl)
+	resp, err := (*wt).sendAuthenticatedRequest(url)
+
 	if err != nil {
 		log.Println(err)
 	}
-
-	defer resp.Body.Close()
 
 	var goals Goals
 

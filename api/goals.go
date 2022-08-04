@@ -1,7 +1,5 @@
 package api
 
-import "fmt"
-
 type Range struct {
 	Date     string `json:"date"`
 	End      string `json:"end"`
@@ -56,15 +54,4 @@ type Goals struct {
 	Data       []GoalData `json:"data"`
 	Total      int64      `json:"total"`
 	TotalPages int64      `json:"total_pages"`
-}
-
-func FormatGoal(goalData GoalData) string {
-	oneliner := fmt.Sprintf("[%s - %s] [%f] %s",
-		goalData.Title,
-		goalData.Type,
-		goalData.ImproveByPercent,
-		goalData.AverageStatus,
-	)
-
-	return oneliner
 }
