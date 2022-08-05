@@ -51,18 +51,6 @@ const baseLoginUrl = "https://wakatime.com/oauth/authorize"
 const wakatimeApiUrl = "https://wakatime.com/api/v1"
 const redirectUrl = "http://127.0.0.1:8090/wakago/callback"
 
-var wakatimeOauthConfig = &oauth2.Config{
-	RedirectURL:  redirectUrl,
-	ClientID:     os.Getenv("CLIENT_ID"),
-	ClientSecret: os.Getenv("CLIENT_SECRET"),
-	Scopes:       []string{"email,", "read_logged_time,", "read_stats,", "read_orgs"},
-	Endpoint: oauth2.Endpoint{
-		AuthURL:   "https://wakatime.com/oauth/authorize",
-		TokenURL:  "https://wakatime.com/oauth/token",
-		AuthStyle: 0,
-	},
-}
-
 func (wt *Wakatime) Init(clientId, clientSecret string) {
 	log.Println("Init")
 	(*wt).oauth2 = &oauth2.Config{
