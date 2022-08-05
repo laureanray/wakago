@@ -19,9 +19,6 @@ func Callback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	log.Println(wt.oauthToken, code)
 
 	wt.Exchange(code)
-	goals, err := wt.GetGoals()
-
-	log.Println("Goals: ", goals)
 
 	if err != nil {
 		log.Fatal(err)

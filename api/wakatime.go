@@ -126,7 +126,7 @@ func GetInstance() *Wakatime {
 
 func (wt *Wakatime) Login() (err error) {
 	token := generateToken()
-	u := wakatimeOauthConfig.AuthCodeURL(token)
+	u := (*wt).oauth2.AuthCodeURL(token)
 
 	err = openBrowser(u)
 	if err != nil {
