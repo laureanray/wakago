@@ -3,15 +3,16 @@ package api
 import (
 	"errors"
 	"fmt"
+	"log"
 )
 
-type Format int64
+type Format string
 
 const (
-	OneLiner Format = iota
-	TwoLiner
-	Pretty
-	Custom
+	OneLiner   Format = "oneliner"
+	MultiLiner        = "multiliner"
+	Pretty            = "pretty"
+	Custom            = "custom"
 )
 
 func FormatGoal(goalData GoalData) string {
@@ -39,7 +40,7 @@ func FormatGoalsCustom(goals Goals, customFormat string) string {
 	return ""
 }
 
-func FormatGoalsTwoLiner(goals Goals) string {
+func FormatGoalsMultiLiner(goals Goals) string {
 	var result string
 
 	for _, g := range goals.Data {
@@ -47,18 +48,19 @@ func FormatGoalsTwoLiner(goals Goals) string {
 		result += fmt.Sprintf("\n\n%s - %s\n", g.Title, g.CumulativeStatus)
 		today := g.ChartData[len(g.ChartData)-1]
 		current = fmt.Sprintf("\n %s %s %s of %s", today.Range.Date, today.RangeStatus, today.ActualSecondsText, today.GoalSecondsText)
-		result += result + current
+		result += current
 	}
 
 	return result
 }
 
 func FormatGoals(goals Goals, format Format, opts string) (string, error) {
+	log.Println("FormatGoals()", format)
 	switch format {
 	case OneLiner:
 		return FormatGoalsOneliner(goals), nil
-	case TwoLiner:
-		return FormatGoalsTwoLiner(goals), nil
+	case MultiLiner:
+		return FormatGoalsMultiLiner(goals), nil
 	case Pretty:
 		return FormatGoalsPretty(goals), nil
 	case Custom:

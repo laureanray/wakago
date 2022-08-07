@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"wakago/api"
 
@@ -30,29 +31,33 @@ var getGoalsCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if len(args) > 0 {
-			switch args[0] {
-			case "1":
-				// onliner
-			}
+		if len(args) == 0 {
+			return
 		}
+
 		wt := api.GetInstance()
 		goals, err := wt.GetGoals()
 		if err != nil {
 			log.Println(err)
 		}
 
-		api.FormatGoals(goals)
+		var opts string
+		if len(args) > 1 {
+			opts = args[1]
+		} else {
+			opts = ""
+		}
 
-		//if len(goals.Data) > 0 {
-		//	formatted := api.FormatGoal(goals.Data[0])
-		//	fmt.Print(formatted)
-		//}
+		result, err := api.FormatGoals(goals, api.Format(args[0]), opts)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println(result)
 	},
 }
 
 // TODO: Add cmd for other endpoints
-
 func init() {
 	getCmd.AddCommand(getGoalsCmd)
 	rootCmd.AddCommand(getCmd)
