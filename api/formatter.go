@@ -3,8 +3,8 @@ package api
 import (
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
+	"time"
 )
 
 type Format string
@@ -26,6 +26,8 @@ func FormatGoal(goalData GoalData) string {
 
 	return oneliner
 }
+
+var counter int = 0
 
 // TODO: Make this reusable if we want to implement
 // formatter for other API endpoints
@@ -49,9 +51,15 @@ func FormatGoalsOneliner(goals Goals, opts any) (result string, err error) {
 
 	goal := goals.Data[idx]
 
+	//	for _, v := range goal.ChartData {
+	//		fmt.Printf("\n%s %s", v.Range, v.ActualSecondsText)
+	//	}
+
+	currentTime := time.Now()
 	today := goal.ChartData[len(goal.ChartData)-1]
 	// This will always be the current date
-	result = fmt.Sprintf("%s %s of %s", today.RangeStatus, today.ActualSecondsText, today.GoalSecondsText)
+
+	result = fmt.Sprintf("%s %s %s of %s", currentTime.String(), today.RangeStatus, today.ActualSecondsText, today.GoalSecondsText)
 	return
 }
 
@@ -86,7 +94,6 @@ func FormatGoalsMultiLiner(goals Goals) string {
 }
 
 func FormatGoals(goals Goals, format Format, opts any) (string, error) {
-	log.Println("FormatGoals()", format)
 	switch format {
 	case OneLiner:
 		return FormatGoalsOneliner(goals, opts)

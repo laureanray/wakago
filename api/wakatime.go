@@ -52,7 +52,6 @@ const wakatimeApiUrl = "https://wakatime.com/api/v1"
 const redirectUrl = "http://127.0.0.1:8090/wakago/callback"
 
 func (wt *Wakatime) Init(clientId, clientSecret string) {
-	log.Println("Init")
 	(*wt).oauth2 = &oauth2.Config{
 		RedirectURL:  redirectUrl,
 		ClientID:     clientId,
@@ -86,6 +85,8 @@ func (wt *Wakatime) initAppData() {
 			(*wt).oauthToken = string(fileData)
 		}
 	}
+
+	log.Println("Init")
 }
 
 func (wt *Wakatime) saveAppData() {
