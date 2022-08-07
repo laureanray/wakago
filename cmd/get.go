@@ -21,7 +21,7 @@ var getCmd = &cobra.Command{
 
 // Option on how should this be look
 // Example: 1-Liner
-//          2-Liner
+//          Multiliner
 //          Pretty
 //          Custom? [Pass formatting string]
 var getGoalsCmd = &cobra.Command{
@@ -41,11 +41,9 @@ var getGoalsCmd = &cobra.Command{
 			log.Println(err)
 		}
 
-		var opts any
+		var opts any = nil
 		if len(args) > 1 {
 			opts = args[1]
-		} else {
-			opts = ""
 		}
 
 		result, err := api.FormatGoals(goals, api.Format(args[0]), opts)
