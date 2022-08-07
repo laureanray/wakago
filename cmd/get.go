@@ -55,8 +55,35 @@ var getGoalsCmd = &cobra.Command{
 	},
 }
 
+var getStatusBarCmd = &cobra.Command{
+	Use:   "status_bar [output type]",
+	Short: "Print to the terminal your current status",
+	Long:  `Print to the terminal your current status and choose the look and feel of the output`,
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+
+		if len(args) == 0 {
+			return
+		}
+
+		wt := api.GetInstance()
+		statusBar, err := wt.GetStatusBar()
+		if err != nil {
+			log.Println(err)
+		}
+
+		result, err := api.FormatStatusBar(statusBar)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println(result)
+	},
+}
+
 // TODO: Add cmd for other endpoints
 func init() {
 	getCmd.AddCommand(getGoalsCmd)
+	getCmd.AddCommand(getStatusBarCmd)
 	rootCmd.AddCommand(getCmd)
 }

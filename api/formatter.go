@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"time"
 )
 
 type Format string
@@ -28,6 +27,11 @@ func FormatGoal(goalData GoalData) string {
 }
 
 var counter int = 0
+
+func FormatStatusBar(statusBar StatusBar) (result string, err error) {
+	result = fmt.Sprintf("%s %s", statusBar.Data.GrandTotal.Text, statusBar.Data.Languages[0].Text)
+	return result, err
+}
 
 // TODO: Make this reusable if we want to implement
 // formatter for other API endpoints
@@ -55,11 +59,10 @@ func FormatGoalsOneliner(goals Goals, opts any) (result string, err error) {
 	//		fmt.Printf("\n%s %s", v.Range, v.ActualSecondsText)
 	//	}
 
-	currentTime := time.Now()
 	today := goal.ChartData[len(goal.ChartData)-1]
 	// This will always be the current date
 
-	result = fmt.Sprintf("%s %s %s of %s", currentTime.String(), today.RangeStatus, today.ActualSecondsText, today.GoalSecondsText)
+	result = fmt.Sprintf("%s %s of %s", today.RangeStatus, today.ActualSecondsText, today.GoalSecondsText)
 	return
 }
 

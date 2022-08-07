@@ -1,13 +1,5 @@
 package api
 
-type Range struct {
-	Date     string `json:"date"`
-	End      string `json:"end"`
-	Start    string `json:"start"`
-	Text     string `json:"text"`
-	Timezone string `json:"timezone"`
-}
-
 type ChartEntry struct {
 	ActualSeconds     float64 `json:"actual_seconds"`
 	ActualSecondsText string  `json:"actual_seconds_text"`

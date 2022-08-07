@@ -85,8 +85,6 @@ func (wt *Wakatime) initAppData() {
 			(*wt).oauthToken = string(fileData)
 		}
 	}
-
-	log.Println("Init")
 }
 
 func (wt *Wakatime) saveAppData() {
@@ -151,7 +149,8 @@ func (wt *Wakatime) sendAuthenticatedRequest(requestUrl string) (*http.Response,
 }
 
 func (wt *Wakatime) GetGoals() (Goals, error) {
-	url := fmt.Sprintf("%s/users/current/goals", wakatimeApiUrl)
+	// TODO: Impl better cache mechanism
+	url := fmt.Sprintf("%s/users/current/goals?cache=false", wakatimeApiUrl)
 	resp, err := (*wt).sendAuthenticatedRequest(url)
 
 	if err != nil {
@@ -169,6 +168,26 @@ func (wt *Wakatime) GetGoals() (Goals, error) {
 	defer resp.Body.Close()
 
 	return goals, err
+}
+
+func (wt *Wakatime) GetStatusBar() (StatusBar, error) {
+	url := fmt.Sprintf("%s/users/current/status_bar/today?cache=false", wakatimeApiUrl)
+	resp, err := (*wt).sendAuthenticatedRequest(url)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	var statusBar StatusBar
+
+	err = json.NewDecoder(resp.Body).Decode(&statusBar)
+
+	if err != nil {
+		log.Println("Error reading respnse", err)
+	}
+
+	defer resp.Body.Close()
+	return statusBar, err
 }
 
 func (wt *Wakatime) Exchange(code string) error {
