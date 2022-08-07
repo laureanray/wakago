@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
 )
 
 type Format string
@@ -28,16 +29,46 @@ func FormatGoal(goalData GoalData) string {
 
 // TODO: Make this reusable if we want to implement
 // formatter for other API endpoints
-func FormatGoalsOneliner(goals Goals) string {
-	return ""
+func FormatGoalsOneliner(goals Goals, opts any) (result string, err error) {
+	if opts == nil {
+		return "", errors.New("Opts not provided")
+	}
+
+	var idx int
+
+	i, ok := opts.(string)
+
+	idx, err = strconv.Atoi(i)
+	if !ok {
+		return "", errors.New("Invalid opts")
+	}
+
+	if idx > len(goals.Data)-1 {
+		return "", errors.New("Invalid goal index")
+	}
+
+	goal := goals.Data[idx]
+
+	today := goal.ChartData[len(goal.ChartData)-1]
+	// This will always be the current date
+	result = fmt.Sprintf("%s %s of %s", today.RangeStatus, today.ActualSecondsText, today.GoalSecondsText)
+	return
 }
 
 func FormatGoalsPretty(goals Goals) string {
 	return ""
 }
 
-func FormatGoalsCustom(goals Goals, customFormat string) string {
-	return ""
+func FormatGoalsCustom(goals Goals, opts any) (string, error) {
+	if opts == nil {
+		return "", errors.New("Opts not provided")
+	}
+	s, ok := opts.(string)
+	if !ok {
+		return "", errors.New("Invalid opts")
+	}
+
+	return s, nil
 }
 
 func FormatGoalsMultiLiner(goals Goals) string {
@@ -54,20 +85,17 @@ func FormatGoalsMultiLiner(goals Goals) string {
 	return result
 }
 
-func FormatGoals(goals Goals, format Format, opts string) (string, error) {
+func FormatGoals(goals Goals, format Format, opts any) (string, error) {
 	log.Println("FormatGoals()", format)
 	switch format {
 	case OneLiner:
-		return FormatGoalsOneliner(goals), nil
+		return FormatGoalsOneliner(goals, opts)
 	case MultiLiner:
 		return FormatGoalsMultiLiner(goals), nil
 	case Pretty:
 		return FormatGoalsPretty(goals), nil
 	case Custom:
-		if len(opts) == 0 {
-			return "", errors.New("Opts not provided")
-		}
-		return FormatGoalsCustom(goals, opts), nil
+		return FormatGoalsCustom(goals, opts)
 	}
 
 	return "", errors.New("Invalid format")

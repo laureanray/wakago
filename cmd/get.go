@@ -41,7 +41,7 @@ var getGoalsCmd = &cobra.Command{
 			log.Println(err)
 		}
 
-		var opts string
+		var opts any
 		if len(args) > 1 {
 			opts = args[1]
 		} else {
