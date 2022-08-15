@@ -102,6 +102,7 @@ func (wt *Wakatime) saveAppData() {
 	bytesWritten, err := f.WriteString((*wt).oauthToken)
 
 	log.Printf("%d bytes written", bytesWritten)
+  return
 }
 
 // TODO: Add expiration?

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"wakago/api"
+	"wakago/server"
 
 	"github.com/spf13/cobra"
 )
@@ -18,7 +19,9 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		wt := api.GetInstance()
 		wt.Login()
-		api.InitServer()
+		s := server.GetInstance()
+
+		s.Init()
 	},
 }
 
