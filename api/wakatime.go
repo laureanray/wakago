@@ -102,7 +102,7 @@ func (wt *Wakatime) saveAppData() {
 	bytesWritten, err := f.WriteString((*wt).oauthToken)
 
 	log.Printf("%d bytes written", bytesWritten)
-  return
+	return
 }
 
 // TODO: Add expiration?
@@ -198,6 +198,9 @@ func (wt *Wakatime) Exchange(code string) error {
 	}
 	(*wt).oauthToken = accessToken.AccessToken
 	(*wt).saveAppData()
+
+	// TODO: Update this implementation
+	//defer os.Exit(0)
 	return err
 }
 

@@ -1,10 +1,9 @@
 package server
 
 import (
-	"context"
+	"fmt"
 	"log"
 	"net/http"
-	"text/template"
 	"wakago/api"
 
 	"github.com/julienschmidt/httprouter"
@@ -26,25 +25,11 @@ func GetInstance() *Server {
 }
 
 func loginCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	w.Header().Set("Content-Type", "text/html; charset=utf8")
-	t, err := template.ParseFiles("static/callback.html")
-	if err != nil {
-		log.Println(err)
-	}
 	code := r.URL.Query().Get("code")
 	wt := api.GetInstance()
 	wt.Exchange(code)
+	fmt.Fprint(w, "Welcome!\n")
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	t.Execute(w, nil)
-	if err != nil {
-		log.Println("e", err)
-	}
-
-	serverInstance.server.Shutdown(context.TODO())
 }
 
 func (s *Server) Init() {
