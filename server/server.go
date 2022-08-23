@@ -29,7 +29,6 @@ func loginCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	wt := api.GetInstance()
 	wt.Exchange(code)
 	fmt.Fprint(w, "Welcome!\n")
-
 }
 
 func (s *Server) Init() {
