@@ -37,7 +37,12 @@ func FormatStatusBar(statusBar StatusBar) (result string, err error) {
 // formatter for other API endpoints
 func FormatGoalsOneliner(goals Goals, opts any) (result string, err error) {
 	if opts == nil {
-		return "", errors.New("Opts not provided")
+		return "", errors.New(`Opts not provided this is required when format is set to 'oneliner'
+Example: wakago get goals 0 oneliner`)
+	}
+
+	if len(goals.Data) == 0 {
+		return "", errors.New("No goals set")
 	}
 
 	var idx int
@@ -72,7 +77,7 @@ func FormatGoalsPretty(goals Goals) string {
 
 func FormatGoalsCustom(goals Goals, opts any) (string, error) {
 	if opts == nil {
-		return "", errors.New("Opts not provided")
+		return "", errors.New("Opts not provided, ")
 	}
 	s, ok := opts.(string)
 	if !ok {

@@ -142,8 +142,12 @@ func (wt *Wakatime) sendAuthenticatedRequest(requestUrl string) (*http.Response,
 
 	resp, err := (*wt).client.Do(req)
 
+	if resp.StatusCode != http.StatusOK {
+		log.Println("Non-OK HTTP Status:", resp.StatusCode)
+	}
+
 	if err != nil {
-		log.Println("erro", err)
+		log.Println("Error sending request", err)
 	}
 
 	return resp, err

@@ -19,6 +19,7 @@ var getCmd = &cobra.Command{
 	},
 }
 
+// TODO: Make this more idiomatic
 // Option on how should this be look
 // Example: 1-Liner
 //          Multiliner
