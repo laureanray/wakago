@@ -29,6 +29,7 @@ func FormatGoal(goalData GoalData) string {
 var counter int = 0
 
 func FormatStatusBar(statusBar StatusBar) (result string, err error) {
+  fmt.Println(statusBar.Data.GrandTotal.Hours)
 	result = fmt.Sprintf("%s %s", statusBar.Data.GrandTotal.Text, statusBar.Data.Languages[0].Text)
 	return result, err
 }

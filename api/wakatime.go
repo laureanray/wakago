@@ -57,7 +57,7 @@ func (wt *Wakatime) Init(clientId, clientSecret string) {
 		RedirectURL:  redirectUrl,
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
-		Scopes:       []string{"email", "read_stats"},
+		Scopes:       []string{"email", "read_stats", "read_logged_time"},
 		Endpoint: oauth2.Endpoint{
 			AuthURL:   "https://wakatime.com/oauth/authorize",
 			TokenURL:  "https://wakatime.com/oauth/token",
@@ -214,7 +214,6 @@ func (wt *Wakatime) Exchange(code string) error {
 	(*wt).saveAppData()
 
 	// TODO: Update this implementation
-	//defer os.Exit(0)
 	return err
 }
 
