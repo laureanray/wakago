@@ -10,7 +10,8 @@ package api
 import (
 	"context"
 	"crypto/rand"
-	"encoding/base64"
+	"crypto/sha1"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -21,7 +22,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"golang.org/x/oauth2"
+	"github.com/laureanray/oauth2"
 )
 
 type Wakatime struct {
@@ -56,7 +57,7 @@ func (wt *Wakatime) Init(clientId, clientSecret string) {
 		RedirectURL:  redirectUrl,
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
-		Scopes:       []string{"email,", "read_logged_time,", "read_stats"},
+		Scopes:       []string{"email", "read_stats"},
 		Endpoint: oauth2.Endpoint{
 			AuthURL:   "https://wakatime.com/oauth/authorize",
 			TokenURL:  "https://wakatime.com/oauth/token",
@@ -107,13 +108,20 @@ func (wt *Wakatime) saveAppData() {
 
 // TODO: Add expiration?
 func generateToken() string {
-	b := make([]byte, 16)
+	// Generate a random 40-byte slice
+	randomBytes := make([]byte, 40)
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		panic(err)
+	}
 
-	rand.Read(b)
+	// Calculate the SHA-1 hash of the random bytes
+	sha1Hash := sha1.Sum(randomBytes)
 
-	state := base64.URLEncoding.EncodeToString(b)
+	// Convert the SHA-1 hash to hexadecimal representation
+	sha1Hex := hex.EncodeToString(sha1Hash[:])
 
-	return state
+	return sha1Hex
 }
 
 func GetInstance() *Wakatime {
@@ -125,8 +133,9 @@ func GetInstance() *Wakatime {
 }
 
 func (wt *Wakatime) Login() (err error) {
-	token := generateToken()
-	u := (*wt).oauth2.AuthCodeURL(token)
+	state := generateToken()
+  log.Printf("state: %s", state)
+	u := (*wt).oauth2.AuthCodeURL(state)
 
 	err = openBrowser(u)
 	if err != nil {
@@ -196,6 +205,7 @@ func (wt *Wakatime) GetStatusBar() (StatusBar, error) {
 }
 
 func (wt *Wakatime) Exchange(code string) error {
+  log.Println("Trying to exchange:", code)
 	accessToken, err := (*wt).oauth2.Exchange(context.Background(), code)
 	if err != nil {
 		log.Println("Exchange:", err)
