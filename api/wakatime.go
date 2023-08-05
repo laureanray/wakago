@@ -22,7 +22,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/laureanray/oauth2"
+	"golang.org/x/oauth2"
 )
 
 type Wakatime struct {
