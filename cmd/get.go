@@ -11,6 +11,7 @@ import (
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
+  Aliases: []string{"g"},
 	Short: "Get stats (goals, editors, etc)",
 	Long: `Get statistics from WakaTime API
   See: https://wakatime.com/developers#introduction
@@ -61,8 +62,19 @@ var getStatusBarCmd = &cobra.Command{
 	Short: "Print to the terminal your current status",
   Aliases: []string{"sb"},
 	Long:  `Print to the terminal your current status and choose the look and feel of the output`,
-	Args:  cobra.MinimumNArgs(1),
+	// Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+    // TODO: Not sure yet 
+	},
+}
+
+var getStatusForLangCmd = &cobra.Command{
+  Use: "lang [language]",
+  Short: "Print to the terminal your current status for a language",
+  Long: `Print to the terminal your current status for a language and choose the look and feel of the output`,
+  Args: cobra.MinimumNArgs(1),
+  Aliases: []string{"l"},
+  Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) == 0 {
 			return
@@ -70,21 +82,22 @@ var getStatusBarCmd = &cobra.Command{
 
 		wt := api.GetInstance()
 		statusBar, err := wt.GetStatusBar()
-	if err != nil {
-			log.Println("Failed to get status bar data from WakaTime")
-		}
+    if err != nil {
+      log.Println("Failed to get status bar data from WakaTime")
+    }
 
 		result, err := api.FormatStatusBar(statusBar)
 		if err != nil {
-			fmt.Println("Failed to format the status bar data")
+			fmt.Println("Faile to format the status bar data")
 		}
 
 		fmt.Println(result)
-	},
+  },
 }
 
 // TODO: Add cmd for other endpoints
 func init() {
+  getStatusBarCmd.AddCommand(getStatusForLangCmd)
 	getCmd.AddCommand(getGoalsCmd)
 	getCmd.AddCommand(getStatusBarCmd)
 	rootCmd.AddCommand(getCmd)

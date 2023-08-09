@@ -33,6 +33,7 @@ func FormatStatusBar(statusBar StatusBar) (result string, err error) {
 	return result, err
 }
 
+
 // TODO: Make this reusable if we want to implement
 // formatter for other API endpoints
 func FormatGoalsOneliner(goals Goals, opts any) (result string, err error) {
