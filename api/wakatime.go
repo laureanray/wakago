@@ -21,14 +21,16 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"time"
 
 	"golang.org/x/oauth2"
 )
 
 type Wakatime struct {
-	oauth2     *oauth2.Config
-	oauthToken string
-	client     *http.Client
+	oauth2       *oauth2.Config
+	oauthToken   string
+	refreshToken string
+	client       *http.Client
 }
 
 var wtInstance *Wakatime
@@ -61,7 +63,7 @@ func (wt *Wakatime) Init(clientId, clientSecret string) {
 		Endpoint: oauth2.Endpoint{
 			AuthURL:   "https://wakatime.com/oauth/authorize",
 			TokenURL:  "https://wakatime.com/oauth/token",
-			AuthStyle: 1,
+			AuthStyle: 0,
 		},
 	}
 
@@ -101,8 +103,13 @@ func (wt *Wakatime) saveAppData() {
 	}()
 
 	bytesWritten, err := f.WriteString((*wt).oauthToken)
-
 	log.Printf("%d bytes written", bytesWritten)
+	// defer func() {
+	//   time.Sleep(5 * time.Second)
+	//   os.Exit(0);
+	// }()
+
+	time.Sleep(5 * time.Second)
 	return
 }
 
@@ -134,7 +141,7 @@ func GetInstance() *Wakatime {
 
 func (wt *Wakatime) Login() (err error) {
 	state := generateToken()
-  log.Printf("state: %s", state)
+	log.Printf("state: %s", state)
 	u := (*wt).oauth2.AuthCodeURL(state)
 
 	err = openBrowser(u)
@@ -205,7 +212,7 @@ func (wt *Wakatime) GetStatusBar() (StatusBar, error) {
 }
 
 func (wt *Wakatime) Exchange(code string) error {
-  log.Println("Trying to exchange:", code)
+	log.Println("Trying to exchange:", code)
 	accessToken, err := (*wt).oauth2.Exchange(context.Background(), code)
 	if err != nil {
 		log.Println("Exchange:", err)
@@ -213,9 +220,20 @@ func (wt *Wakatime) Exchange(code string) error {
 	(*wt).oauthToken = accessToken.AccessToken
 	(*wt).saveAppData()
 
-	// TODO: Update this implementation
 	return err
 }
+
+// func (wt *Wakatime) Refresh() error {
+// 	log.Println("Trying to refresh token")
+// 	accessToken, err := (*wt).oauth2.TokenSource(
+//     context.Background(),
+//     &oauth2.Token{RefreshToken: (*wt).oauthToken}).Token()
+//
+// 	if err != nil {
+// 	}
+//
+// 	(*wt).oauthToken = accessToken.AccessToken
+// }
 
 func (wt *Wakatime) Status() string {
 	var status string

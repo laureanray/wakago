@@ -29,14 +29,13 @@ func loginCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	wt := api.GetInstance()
 	wt.Exchange(code)
 	fmt.Fprint(w, "Welcome!\n")
-	// FIXME: Kill server after this.
 }
 
 func (s *Server) Init() {
-	log.Println("Waiting for redirect URI")
+	// go func() {
 	(*s).router = httprouter.New()
 	(*s).server = &http.Server{Addr: ":8090", Handler: (*s).router}
 	(*s).router.GET("/wakago/callback", loginCallback)
-	log.Println("Server started")
 	log.Fatal((*s).server.ListenAndServe())
+	// }()
 }

@@ -59,6 +59,7 @@ var getGoalsCmd = &cobra.Command{
 var getStatusBarCmd = &cobra.Command{
 	Use:   "status_bar [output type]",
 	Short: "Print to the terminal your current status",
+  Aliases: []string{"sb"},
 	Long:  `Print to the terminal your current status and choose the look and feel of the output`,
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -69,13 +70,13 @@ var getStatusBarCmd = &cobra.Command{
 
 		wt := api.GetInstance()
 		statusBar, err := wt.GetStatusBar()
-		if err != nil {
-			log.Println(err)
+	if err != nil {
+			log.Println("Failed to get status bar data from WakaTime")
 		}
 
 		result, err := api.FormatStatusBar(statusBar)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("Failed to format the status bar data")
 		}
 
 		fmt.Println(result)
