@@ -16,6 +16,7 @@ var getCmd = &cobra.Command{
 	Long: `Get statistics from WakaTime API
   See: https://wakatime.com/developers#introduction
   `,
+  Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 	},
 }
@@ -28,7 +29,7 @@ var getCmd = &cobra.Command{
 //          Custom? [Pass formatting string]
 var getGoalsCmd = &cobra.Command{
 	Use:   "goals [output type]",
-	Short: "Print to the terminal your current goals",
+	Short: "Print your current goals to the terminal",
 	Long:  `Print to the terminal your current goals and choose the look and feel of the output`,
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -39,9 +40,8 @@ var getGoalsCmd = &cobra.Command{
 
 		wt := api.GetInstance()
 		goals, err := wt.GetGoals()
-		if err != nil {
-			log.Println(err)
-		}
+
+    fmt.Println(goals)
 
 		var opts any = nil
 		if len(args) > 1 {
@@ -59,12 +59,11 @@ var getGoalsCmd = &cobra.Command{
 
 var getStatusBarCmd = &cobra.Command{
 	Use:   "status_bar [output type]",
-	Short: "Print to the terminal your current status",
+	Short: "Print your current status to the terminal",
   Aliases: []string{"sb"},
 	Long:  `Print to the terminal your current status and choose the look and feel of the output`,
-	// Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-    // TODO: Not sure yet 
 	},
 }
 
