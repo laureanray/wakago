@@ -41,19 +41,24 @@ var getGoalsCmd = &cobra.Command{
 		wt := api.GetInstance()
 		goals, err := wt.GetGoals()
 
+    if err != nil {
+       fmt.Println(err)
+    }
+    
+
     fmt.Println(goals)
 
-		var opts any = nil
-		if len(args) > 1 {
-			opts = args[1]
-		}
+		// var opts any = nil
+		// if len(args) > 1 {
+		// 	opts = args[1]
+		// }
 
-		result, err := api.FormatGoals(goals, api.Format(args[0]), opts)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		fmt.Println(result)
+		// result, err := api.FormatGoals(goals, api.Format(args[0]), opts)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// }
+		//
+		// fmt.Println(result)
 	},
 }
 

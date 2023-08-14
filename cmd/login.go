@@ -20,7 +20,6 @@ to quickly create a Cobra application.`,
 		wt := api.GetInstance()
 		wt.Login()
 		s := server.GetInstance()
-
 		s.Init()
 	},
 }
