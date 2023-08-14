@@ -78,20 +78,22 @@ func (wt *Wakatime) initAppData() {
 	if errors.Is(err, os.ErrNotExist) {
 		log.Println("File doesnt exist")
 	} else {
-		fileData, err := ioutil.ReadFile("wakatime.json")
+		bytes, err := ioutil.ReadFile("wakatime.json")
+
 		if err != nil {
 			log.Fatal(err)
 		}
-		if len(fileData) != 0 {
-			// Read the data and use it
 
-			(*wt).OauthToken = string(fileData)
-		}
+    err = json.Unmarshal(bytes, &wt)
+
+    if err != nil {
+      log.Fatalln("Failed to unmarhsall app data. Maybe the JSON file brokey?")
+    }
 	}
 }
 
 func (wt *Wakatime) saveAppData() {
-	f, err := os.OpenFile("wakatime.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile("wakatime.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -125,7 +127,6 @@ func generateToken() string {
 
 	// Convert the SHA-1 hash to hexadecimal representation
 	sha1Hex := hex.EncodeToString(sha1Hash[:])
-
 	return sha1Hex
 }
 
