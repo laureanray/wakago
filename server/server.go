@@ -32,10 +32,8 @@ func loginCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 }
 
 func (s *Server) Init() {
-	// go func() {
 	(*s).router = httprouter.New()
 	(*s).server = &http.Server{Addr: ":8090", Handler: (*s).router}
 	(*s).router.GET("/wakago/callback", loginCallback)
 	log.Fatal((*s).server.ListenAndServe())
-	// }()
 }
