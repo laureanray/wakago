@@ -27,10 +27,10 @@ import (
 )
 
 type Wakatime struct {
-	oauth2       *oauth2.Config
-	oauthToken   string
-	refreshToken string
-	client       *http.Client
+	oauth2       *oauth2.Config `json:"-"`
+	OauthToken   string         `json:"oauth_token"`
+	RefreshToken string         `json:"refresh_token"`
+	client       *http.Client   `json:"-"`
 }
 
 var wtInstance *Wakatime
@@ -73,25 +73,25 @@ func (wt *Wakatime) Init(clientId, clientSecret string) {
 
 // TODO: Improve this to use key value store or something more robust
 func (wt *Wakatime) initAppData() {
-	_, err := os.Stat("wakatime.data")
+	_, err := os.Stat("wakatime.json")
 
 	if errors.Is(err, os.ErrNotExist) {
 		log.Println("File doesnt exist")
 	} else {
-		fileData, err := ioutil.ReadFile("wakatime.data")
+		fileData, err := ioutil.ReadFile("wakatime.json")
 		if err != nil {
 			log.Fatal(err)
 		}
 		if len(fileData) != 0 {
 			// Read the data and use it
 
-			(*wt).oauthToken = string(fileData)
+			(*wt).OauthToken = string(fileData)
 		}
 	}
 }
 
 func (wt *Wakatime) saveAppData() {
-	f, err := os.OpenFile("wakatime.data", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile("wakatime.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -102,13 +102,11 @@ func (wt *Wakatime) saveAppData() {
 		}
 	}()
 
-	bytesWritten, err := f.WriteString((*wt).oauthToken)
+  // TODO: Add err handling
+  fmt.Println(*wt)
+  b, err := json.Marshal(wt)
+	bytesWritten, err := f.Write(b)
 	log.Printf("%d bytes written", bytesWritten)
-	// defer func() {
-	//   time.Sleep(5 * time.Second)
-	//   os.Exit(0);
-	// }()
-
 	time.Sleep(5 * time.Second)
 	return
 }
@@ -153,9 +151,7 @@ func (wt *Wakatime) Login() (err error) {
 
 func (wt *Wakatime) sendAuthenticatedRequest(requestUrl string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", requestUrl, nil)
-
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", (*wt).oauthToken))
-
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", (*wt).OauthToken))
 	resp, err := (*wt).client.Do(req)
 
 	if resp.StatusCode != http.StatusOK {
@@ -211,13 +207,16 @@ func (wt *Wakatime) GetStatusBar() (StatusBar, error) {
 	return statusBar, err
 }
 
+// Exchange the code for an access token then save it to the local json file
+// for later use.
 func (wt *Wakatime) Exchange(code string) error {
-	log.Println("Trying to exchange:", code)
 	accessToken, err := (*wt).oauth2.Exchange(context.Background(), code)
+
 	if err != nil {
 		log.Println("Exchange:", err)
 	}
-	(*wt).oauthToken = accessToken.AccessToken
+
+	(*wt).OauthToken = accessToken.AccessToken
 	(*wt).saveAppData()
 
 	return err
@@ -237,8 +236,8 @@ func (wt *Wakatime) Exchange(code string) error {
 
 func (wt *Wakatime) Status() string {
 	var status string
-	if (*wt).oauthToken != "" {
-		status = fmt.Sprintf("✓ Access Token Set: %s", (*wt).oauthToken)
+	if (*wt).OauthToken != "" {
+		status = fmt.Sprintf("✓ Access Token Set: %s", (*wt).OauthToken)
 	}
 
 	return status
